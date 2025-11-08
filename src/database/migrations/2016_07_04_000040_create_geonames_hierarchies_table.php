@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  * Time: 5:14 PM
  */
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateGeonamesHierarchiesTable extends Migration
 {
@@ -37,8 +38,8 @@ class CreateGeonamesHierarchiesTable extends Migration
             $table->foreign('parent_id')->references('geoname_id')->on('geonames_geonames')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('child_id')->index()->unsigned();
             $table->foreign('child_id')->references('geoname_id')->on('geonames_geonames')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('type',40)->index();
-            $table->unique(['parent_id','child_id']);
+            $table->string('type', 40)->index();
+            $table->unique(['parent_id', 'child_id']);
         });
     }
 
@@ -49,6 +50,6 @@ class CreateGeonamesHierarchiesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('geonames_hierarchies');
+        Schema::dropIfExists('geonames_hierarchies');
     }
 }

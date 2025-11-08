@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -38,13 +39,6 @@ class GeonamesServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
-    /**
      * Bootstrap the application events.
      *
      * @return void
@@ -53,15 +47,14 @@ class GeonamesServiceProvider extends ServiceProvider
     {
 
         $this->publishes([
-            __DIR__ . '/database/migrations' => base_path('database/migrations')
+            __DIR__.'/database/migrations' => base_path('database/migrations'),
         ], 'migrations');
 
-
         $this->publishes([
-            __DIR__ . '/config/geonames.php' =>  base_path('config/geonames.php')
+            __DIR__.'/config/geonames.php' => base_path('config/geonames.php'),
         ], 'config');
-        
-        $this->mergeConfigFrom(realpath(__DIR__ . '/config/geonames.php'), 'geonames');
+
+        $this->mergeConfigFrom(realpath(__DIR__.'/config/geonames.php'), 'geonames');
     }
 
     /**
@@ -73,15 +66,4 @@ class GeonamesServiceProvider extends ServiceProvider
     {
         $this->commands($this->serviceCommands);
     }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return $this->serviceCommands;
-    }
-
 }

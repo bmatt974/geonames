@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  * Time: 5:14 PM
  */
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateGeonamesGeonamesTable extends Migration
 {
@@ -63,6 +64,6 @@ class CreateGeonamesGeonamesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('geonames_geonames');
+        Schema::dropIfExists('geonames_geonames');
     }
 }

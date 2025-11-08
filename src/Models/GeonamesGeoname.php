@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -22,13 +23,13 @@
 
 namespace Yurtesen\Geonames\Models;
 
-use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Yurtesen\Geonames\Models\GeonamesGeoname
  *
- * @property integer $geoname_id
+ * @property int $geoname_id
  * @property string $name
  * @property string $ascii_name
  * @property string $alternate_names
@@ -42,14 +43,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $admin2_code
  * @property string $admin3_code
  * @property string $admin4_code
- * @property integer $population
- * @property integer $elevation
- * @property integer $dem
+ * @property int $population
+ * @property int $elevation
+ * @property int $dem
  * @property string $timezone_id
  * @property string $modified_at
  * @property-read \Yurtesen\Geonames\Models\GeonamesAlternateName $alternateName
  * @property-read \Yurtesen\Geonames\Models\GeonamesTimezone $timeZone
  * @property-read \Yurtesen\Geonames\Models\GeonamesCountryInfo $countryInfo
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesGeoname whereGeonameId($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesGeoname whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesGeoname whereAsciiName($value)
@@ -74,6 +76,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesGeoname city($name = null, $featureCodes = array())
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesGeoname country($name = null, $featureCodes = array())
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesGeoname searchByFeature($name = null, $feature_class = null, $featureCodes = null)
+ *
  * @mixin \Eloquent
  */
 class GeonamesGeoname extends Model
@@ -123,7 +126,7 @@ class GeonamesGeoname extends Model
     private $usefulScopeColumns = [
         'geonames_geonames.geoname_id',
         'geonames_geonames.name',
-        'geonames_geonames.country_code'
+        'geonames_geonames.country_code',
     ];
 
     /**
@@ -156,25 +159,25 @@ class GeonamesGeoname extends Model
         return $this->hasOne(GeonamesCountryInfo::class, 'iso', 'country_code');
     }
 
-
     /**
      * Return admin1 information in result
      *
-     * @param \Illuminate\Database\Query\Builder $query
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @return \Illuminate\Database\Query\Builder
      */
     public function scopeAdmin1($query)
     {
         $table = 'geonames_geonames';
 
-        if (!isset($query->getQuery()->columns))
+        if (! isset($query->getQuery()->columns)) {
             $query = $query->addSelect($this->usefulScopeColumns);
+        }
 
         $query = $query
             ->leftJoin('geonames_admin1_codes as admin1', 'admin1.code', '=',
-                DB::raw('CONCAT_WS(\'.\',' .
-                    $table . '.country_code,' .
-                    $table . '.admin1_code)')
+                DB::raw('CONCAT_WS(\'.\','.
+                    $table.'.country_code,'.
+                    $table.'.admin1_code)')
             )
             ->addSelect(
                 'admin1.geoname_id as admin1_geoname_id',
@@ -187,18 +190,19 @@ class GeonamesGeoname extends Model
     /**
      * Return country information in result
      *
-     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Query\Builder
      */
     public function scopeAddCountryInfo($query)
     {
         $table = 'geonames_geonames';
 
-        if (!isset($query->getQuery()->columns))
+        if (! isset($query->getQuery()->columns)) {
             $query = $query->addSelect($this->usefulScopeColumns);
+        }
 
         $query = $query
-            ->leftJoin('geonames_country_infos as country_info', $table . '.country_code', '=',
+            ->leftJoin('geonames_country_infos as country_info', $table.'.country_code', '=',
                 'country_info.iso'
             )
             ->addSelect(
@@ -208,7 +212,6 @@ class GeonamesGeoname extends Model
 
         return $query;
     }
-
 
     /**
      * Build a query to find major cities. Accepts wildcards eg. 'Helsin%'
@@ -221,15 +224,15 @@ class GeonamesGeoname extends Model
      *                                                          (`country_code`,`feature_class`,`feature_code`,`name`);
      *
      *
-     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
-     * @param String $name
-     * @param array $featureCodes List of feature codes to use when returning results
-     *                            defaults to ['PPLC','PPLA','PPLA2', 'PPLA3']
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $name
+     * @param  array  $featureCodes  List of feature codes to use when returning results
+     *                               defaults to ['PPLC','PPLA','PPLA2', 'PPLA3']
      * @return \Illuminate\Database\Query\Builder
      */
     public function scopeCity($query, $name = null, $featureCodes = ['PPLC', 'PPLA', 'PPLA2', 'PPLA3'])
     {
-        return $this->scopeSearchByFeature($query,$name,'P',$featureCodes);
+        return $this->scopeSearchByFeature($query, $name, 'P', $featureCodes);
     }
 
     /**
@@ -239,43 +242,42 @@ class GeonamesGeoname extends Model
      * ALTER TABLE geonames_geonames ADD INDEX geonames_geonames_feature_name_index
      *                                                          (`feature_class`,`feature_code`,`name`);
      *
-     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
-     * @param String $name
-     * @param array $featureCodes List of feature codes to use when returning results
-     *                            defaults to ['PCLI']
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $name
+     * @param  array  $featureCodes  List of feature codes to use when returning results
+     *                               defaults to ['PCLI']
      * @return \Illuminate\Database\Query\Builder
      */
     public function scopeCountry($query, $name = null, $featureCodes = ['PCLI'])
     {
-        return $this->scopeSearchByFeature($query,$name,'A',$featureCodes);
+        return $this->scopeSearchByFeature($query, $name, 'A', $featureCodes);
     }
-
 
     /**
      * Generic query used by scopes, but you can call it with custom feataure codes.
      *
-     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
-     * @param String $name
-     * @param String $feature_class The 1 character feature class
-     * @param array $featureCodes List of feature codes to use when returning results
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $name
+     * @param  string  $feature_class  The 1 character feature class
+     * @param  array  $featureCodes  List of feature codes to use when returning results
      * @return \Illuminate\Database\Query\Builder
      */
-    public function scopeSearchByFeature($query, $name = null, $feature_class=null, $featureCodes = null)
+    public function scopeSearchByFeature($query, $name = null, $feature_class = null, $featureCodes = null)
     {
         $table = 'geonames_geonames';
 
-        if (!isset($query->getQuery()->columns))
+        if (! isset($query->getQuery()->columns)) {
             $query = $query->addSelect($this->usefulScopeColumns);
+        }
 
-        if ($name !== null)
-            $query = $query->where($table . '.name', 'LIKE', $name);
+        if ($name !== null) {
+            $query = $query->where($table.'.name', 'LIKE', $name);
+        }
 
         $query = $query
-            ->where($table . '.feature_class', $feature_class)
-            ->whereIn($table . '.feature_code', $featureCodes);
+            ->where($table.'.feature_class', $feature_class)
+            ->whereIn($table.'.feature_code', $featureCodes);
 
         return $query;
     }
-
-
 }

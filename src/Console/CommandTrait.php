@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,6 @@
  *     along with this.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * User: Evren Yurtesen
  * Date: 09-Jul-16
@@ -23,16 +23,14 @@
 
 namespace Yurtesen\Geonames\Console;
 
-
 use Closure;
-use DB;
 use Illuminate\Console\OutputStyle;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use ZipArchive;
 
 trait CommandTrait
 {
-
     /**
      * Buffer size to use when executing SQL statements in number of rows
      * I experimented and 1000 is a very reasonable value. Larvger values
@@ -47,7 +45,7 @@ trait CommandTrait
      *
      * @var array
      */
-    protected $continentCodes = array(
+    protected $continentCodes = [
         'AF' => 6255146,
         'AS' => 6255147,
         'EU' => 6255148,
@@ -55,82 +53,82 @@ trait CommandTrait
         'OC' => 6255151,
         'SA' => 6255150,
         'AN' => 6255152,
-    );
+    ];
 
     /**
      * This is the main list of url,filename and table values we will work with
      *
      * @var array
      */
-    protected $files = array(
-        'timeZones' => array(
+    protected $files = [
+        'timeZones' => [
             'url' => 'http://download.geonames.org/export/dump/timeZones.txt',
             'filename' => 'timeZones',
             'table' => 'geonames_timezones',
-        ),
-        'allCountries' => array(
+        ],
+        'allCountries' => [
             'url' => 'http://download.geonames.org/export/dump/allCountries.zip',
             'filename' => 'allCountries',
-            'table' => 'geonames_geonames'
-        ),
-        'countryInfo' => array(
+            'table' => 'geonames_geonames',
+        ],
+        'countryInfo' => [
             'url' => 'http://download.geonames.org/export/dump/countryInfo.txt',
             'filename' => 'countryInfo',
-            'table' => 'geonames_country_infos'
-        ),
-        'iso-languagecodes' => array(
+            'table' => 'geonames_country_infos',
+        ],
+        'iso-languagecodes' => [
             'url' => 'http://download.geonames.org/export/dump/iso-languagecodes.txt',
             'filename' => 'iso-languagecodes',
             'table' => 'geonames_iso_language_codes',
-        ),
-        'alternateNames' => array(
+        ],
+        'alternateNames' => [
             'url' => 'http://download.geonames.org/export/dump/alternateNames.zip',
             'filename' => 'alternateNames',
             'table' => 'geonames_alternate_names',
-        ),
-        'hierarchy' => array(
+        ],
+        'hierarchy' => [
             'url' => 'http://download.geonames.org/export/dump/hierarchy.zip',
             'filename' => 'hierarchy',
             'table' => 'geonames_hierarchies',
-        ),
-        'admin1CodesASCII' => array(
+        ],
+        'admin1CodesASCII' => [
             'url' => 'http://download.geonames.org/export/dump/admin1CodesASCII.txt',
             'filename' => 'admin1CodesASCII',
             'table' => 'geonames_admin1_codes',
-        ),
-        'admin2Codes' => array(
+        ],
+        'admin2Codes' => [
             'url' => 'http://download.geonames.org/export/dump/admin2Codes.txt',
             'filename' => 'admin2Codes',
             'table' => 'geonames_admin2_codes',
-        ),
+        ],
         // Todo: figure out how to manage different languages
-        'featureCodes' => array(
+        'featureCodes' => [
             'url' => 'http://download.geonames.org/export/dump/featureCodes_en.txt',
             'filename' => 'featureCodes_en',
             'table' => 'geonames_feature_codes',
-        )
-    );
+        ],
+    ];
 
     /**
      * List of tables which are already truncated for avoiding double truncation
      * in case if we are importing multiple files into same table.
+     *
      * @var array
      */
-    protected $truncatedTables = array();
+    protected $truncatedTables = [];
 
     /**
      * Parses the array created from different geonames file lines
      * and converts into key=>value type array
      *
-     * @param string $name The config name of the file
-     * @param boolean $refresh Set true for truncating table before inserting rows
-     *
+     * @param  string  $name  The config name of the file
+     * @param  bool  $refresh  Set true for truncating table before inserting rows
      */
     protected function parseGeonamesText($name, $refresh = false)
     {
-        $fieldsArray = array(
+        $fieldsArray = [
             'allCountries' => function ($row) {
-                return array(
+                return [
                     'geoname_id' => $row[0],
                     'name' => $row[1],
                     'ascii_name' => $row[2] ? $row[2] : null,
@@ -150,25 +148,25 @@ trait CommandTrait
                     'dem' => $row[16] ? $row[16] : null,
                     'timezone_id' => $row[17] ? $row[17] : null,
                     'modified_at' => trim($row[18]),
-                );
+                ];
             },
             'iso-languagecodes' => function ($row) {
-                return array(
+                return [
                     'iso_639_3' => $row[0],
                     'iso_639_2' => $row[1] ? $row[1] : null,
                     'iso_639_1' => $row[2] ? $row[2] : null,
                     'language_name' => trim($row[3]),
-                );
+                ];
             },
             'hierarchy' => function ($row) {
-                return array(
+                return [
                     'parent_id' => $row[0],
                     'child_id' => $row[1],
                     'type' => trim($row[2]),
-                );
+                ];
             },
             'alternateNames' => function ($row) {
-                return array(
+                return [
                     'alternate_name_id' => $row[0],
                     'geoname_id' => $row[1],
                     'iso_language' => $row[2] ? $row[2] : null,
@@ -177,21 +175,24 @@ trait CommandTrait
                     'isShortName' => $row[5] ? 1 : 0,
                     'isColloquial' => $row[6] ? 1 : 0,
                     'isHistoric' => $row[7] ? 1 : 0,
-                );
+                ];
             },
             'timeZones' => function ($row) {
                 // Skip unusual comment line in this file
-                if ($row[0] === 'CountryCode') return null;
-                return array(
+                if ($row[0] === 'CountryCode') {
+                    return null;
+                }
+
+                return [
                     'country_code' => $row[0],
                     'timezone_id' => $row[1],
                     'gmt_offset' => $row[2],
                     'dst_offset' => $row[3],
-                    'raw_offset' => $row[4]
-                );
+                    'raw_offset' => $row[4],
+                ];
             },
             'countryInfo' => function ($row) {
-                return array(
+                return [
                     'iso' => $row[0],
                     'iso3' => $row[1],
                     'iso_numeric' => $row[2],
@@ -212,50 +213,51 @@ trait CommandTrait
                     'geoname_id' => $row[16] ? $row[16] : null,
                     'neighbors' => $row[17] ? $row[17] : null,
                     'equivalent_fips_code' => $row[18] ? trim($row[18]) : null,
-                );
+                ];
             },
             'featureCodes' => function ($row) {
-                return array(
+                return [
                     'code' => $row[0],
                     'name' => $row[1],
                     'description' => trim($row[2]),
-                );
+                ];
             },
             'admin1CodesASCII' => function ($row) {
-                return array(
+                return [
                     'code' => $row[0],
                     'name' => $row[1],
                     'name_ascii' => $row[2],
                     'geoname_id' => $row[3],
-                );
+                ];
             },
             'admin2Codes' => function ($row) {
-                return array(
+                return [
                     'code' => $row[0],
                     'name' => $row[1],
                     'name_ascii' => $row[2],
                     'geoname_id' => $row[3],
-                );
+                ];
             },
-        );
+        ];
 
         // This will greatly improve the performance of inserts
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         $tableName = $this->files[$name]['table'];
         // If table is empty or we are refreshing, truncate it unless it was recently truncated!
-        if (!in_array($tableName,$this->truncatedTables) &&
+        if (! in_array($tableName, $this->truncatedTables) &&
             (DB::table($tableName)->count() === 0 || $refresh)
         ) {
             $this->truncatedTables[] = $tableName;
-            $this->line('<info>Database:</info> Truncating table ' . $tableName);
+            $this->line('<info>Database:</info> Truncating table '.$tableName);
             DB::table($tableName)->truncate();
         }
-        $buffer = array();
+        $buffer = [];
         // If it is a custom country code, use allCountries
-        if (in_array($name, config('geonames.countries')))
+        if (in_array($name, config('geonames.countries'))) {
             $fields = $fieldsArray['allCountries'];
-        else
+        } else {
             $fields = $fieldsArray[$name];
+        }
         $this->parseFile($name, function ($row) use (&$buffer, $fields, $tableName) {
             $insert = $fields($row);
             if (isset($insert) && is_array($insert)) {
@@ -263,13 +265,14 @@ trait CommandTrait
             }
             if (count($buffer) === $this->bufferSize) {
                 $this->updateOrInsertMultiple($tableName, $buffer);
-                $buffer = array();
+                $buffer = [];
             }
         });
 
         // Insert leftovers in buffer
-        if (count($buffer) > 0)
+        if (count($buffer) > 0) {
             $this->updateOrInsertMultiple($tableName, $buffer);
+        }
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
@@ -277,8 +280,7 @@ trait CommandTrait
     /**
      * Parse a given file and insert into databaase using closure.
      *
-     * @param  string $name
-     * @param  Closure $callback
+     * @param  string  $name
      * @return void
      */
     protected function parseFile($name, Closure $callback)
@@ -287,12 +289,12 @@ trait CommandTrait
         $basename = basename($url);
         $storagePath = config('geonames.storagePath');
         // Final file path
-        $path = $storagePath . '/' . $this->files[$name]['filename'] . '.txt';
+        $path = $storagePath.'/'.$this->files[$name]['filename'].'.txt';
 
         // Check if file exists (should be since we just downloaded them)
-        $downloadedFilePath = $storagePath . '/' . $basename;
-        if (!file_exists($downloadedFilePath)) {
-            throw new RuntimeException('File does not exist: ' . $downloadedFilePath);
+        $downloadedFilePath = $storagePath.'/'.$basename;
+        if (! file_exists($downloadedFilePath)) {
+            throw new RuntimeException('File does not exist: '.$downloadedFilePath);
         }
         // If it is a zip file we must unzip it
         if (substr($basename, -4) === '.zip') {
@@ -304,24 +306,27 @@ trait CommandTrait
         /* @var $output OutputStyle */
         $output = $this->getOutput();
         $bar = $output->createProgressBar($steps);
-        $bar->setFormat('<info>Seeding File:</info> ' . basename($path) . ' %current%/%max% %bar% %percent%% <info>Remaining Time:</info> %remaining%');
+        $bar->setFormat('<info>Seeding File:</info> '.basename($path).' %current%/%max% %bar% %percent%% <info>Remaining Time:</info> %remaining%');
 
         $steps = 0;
         $fh = fopen($path, 'r');
-        if (!$fh) {
+        if (! $fh) {
             throw new RuntimeException("Can not open file: $path");
         }
-        while (!feof($fh)) {
+        while (! feof($fh)) {
             $line = fgets($fh);
             // ignore empty lines and comments
-            if (!$line or $line === '' or strpos($line, '#') === 0) continue;
+            if (! $line or $line === '' or strpos($line, '#') === 0) {
+                continue;
+            }
             // Geonames format is tab seperated
             $line = explode("\t", $line);
             // Insert using closure
             $callback($line);
             $steps++;
-            if (isset($bar) && $steps % ($this->bufferSize * 10) === 0)
+            if (isset($bar) && $steps % ($this->bufferSize * 10) === 0) {
                 $bar->advance($this->bufferSize * 10);
+            }
         }
         fclose($fh);
         if (isset($bar)) {
@@ -329,39 +334,40 @@ trait CommandTrait
             $output->newLine();
         }
         // If we wont keep txt version delete file
-        if (substr($basename, -4) === '.zip' && !config('geonames.keepTxt')) {
-            $this->line('<info>Removing File:</info> ' . basename($path));
+        if (substr($basename, -4) === '.zip' && ! config('geonames.keepTxt')) {
+            $this->line('<info>Removing File:</info> '.basename($path));
             unlink($path);
         }
     }
-
 
     /**
      * Read the file and get line count
      * Not very efficient but does the job well...
      *
-     * @param  string $path
+     * @param  string  $path
      * @return int $count
      */
     protected function getLineCount($path)
     {
         $fh = fopen($path, 'r');
-        if (!$fh) {
+        if (! $fh) {
             throw new RuntimeException("Can not open file: $path");
         }
         $fileSize = @filesize($path);
         /* @var $output OutputStyle */
         $output = $this->getOutput();
         $bar = $output->createProgressBar($fileSize);
-        $bar->setFormat('<info>Reading File:</info> ' . basename($path) . ' %bar% %percent%% <info>Remaining Time:</info> %remaining%');
+        $bar->setFormat('<info>Reading File:</info> '.basename($path).' %bar% %percent%% <info>Remaining Time:</info> %remaining%');
 
         $steps = 0;
         $currentSize = 0;
-        while (!feof($fh)) {
+        while (! feof($fh)) {
             $line = fgets($fh);
             $currentSize += strlen($line);
             // ignore empty lines and comments
-            if (!$line or $line === '' or strpos($line, '#') === 0) continue;
+            if (! $line or $line === '' or strpos($line, '#') === 0) {
+                continue;
+            }
             $steps++;
             // Reading is so much faster, must slow down advances
             if (isset($bar) && $steps % ($this->bufferSize * 100) === 0) {
@@ -374,6 +380,7 @@ trait CommandTrait
             $bar->finish();
             $output->newLine();
         }
+
         return $steps;
     }
 
@@ -384,18 +391,18 @@ trait CommandTrait
      *
      * Note: The $data must be an array of arrays and have at least 2 elements.
      *
-     * @param  string $tableName
-     * @param  array (array()) $data
-     * @return boolean
+     * @param  string  $tableName
+     * @param  array (array())  $data
+     * @return bool
      */
     protected function updateOrInsertMultiple($tableName, $data)
     {
-        $fields = '`' . implode('`,`', array_keys($data[0])) . '`';
+        $fields = '`'.implode('`,`', array_keys($data[0])).'`';
         // Create strings for variables
         $questionMarks = '';
         $updateList = '';
         foreach (array_keys($data[0]) as $key) {
-            $updateList .= '`' . $key . '`' . '=VALUES(' . '`' . $key . '`' . '),';
+            $updateList .= '`'.$key.'`'.'=VALUES('.'`'.$key.'`'.'),';
             $questionMarks .= '?,';
         }
         // Remove last extra comma
@@ -404,33 +411,31 @@ trait CommandTrait
 
         // If files were not in sync, there may be missing entries in some tables
         $sql = /** @lang text */
-            'INSERT IGNORE INTO ' . $tableName . ' (' . $fields . ') ';
-        $sql .= 'VALUES ' . PHP_EOL;
+            'INSERT IGNORE INTO '.$tableName.' ('.$fields.') ';
+        $sql .= 'VALUES '.PHP_EOL;
         // Set placeholders
-        $sql .= '(' . $questionMarks . ')';
+        $sql .= '('.$questionMarks.')';
         for ($i = 1; $i < count($data); $i++) {
-            $sql .= ',' . PHP_EOL . '(' . $questionMarks . ')';
+            $sql .= ','.PHP_EOL.'('.$questionMarks.')';
         }
         $sql .= PHP_EOL;
-        $valueArray = array();
+        $valueArray = [];
         foreach ($data as $rows) {
             foreach ($rows as $key => $value) {
                 $valueArray[] = $value;
             }
         }
         // Set action on duplicate key updates
-        $sql .= "ON DUPLICATE KEY UPDATE ";
+        $sql .= 'ON DUPLICATE KEY UPDATE ';
         $sql .= $updateList;
 
         return DB::insert($sql, $valueArray);
     }
 
-
     /**
      * Download a file if it does not exist
      *
-     * @param Boolean $update Update files
-     *
+     * @param  bool  $update  Update files
      */
     protected function downloadAllFiles($update = false)
     {
@@ -443,59 +448,60 @@ trait CommandTrait
     /**
      * Download a file if it does not exist
      *
-     * @param String $url Download URL
-     * @param String $path Storage path
-     * @param Boolean $force Force re-download of files
-     *
-     * @return boolean
+     * @param  string  $url  Download URL
+     * @param  string  $path  Storage path
+     * @param  bool  $force  Force re-download of files
+     * @return bool
      */
     protected function downloadFile($name, $update = false)
     {
         $url = $this->files[$name]['url'];
         $storagePath = config('geonames.storagePath');
-        $txtFileName = $this->files[$name]['filename'] . '.txt';
+        $txtFileName = $this->files[$name]['filename'].'.txt';
         $urlSize = $this->getUrlSize($url);
         $urlFileName = basename($url);
 
-        $fileSize = @filesize($storagePath . '/' . $urlFileName);
+        $fileSize = @filesize($storagePath.'/'.$urlFileName);
         if ($fileSize) {
             if ($fileSize === $urlSize) {
-                $this->line('<info>File Exists:</info> ' . $urlFileName . ' with same size as remote geonames file exists.');
+                $this->line('<info>File Exists:</info> '.$urlFileName.' with same size as remote geonames file exists.');
+
                 return true;
-            } else if ($fileSize !== $urlSize && !$update) {
-                $this->line('<info>File Exists:</info> ' . $urlFileName . ' with different size as remote geonames file exists. You should consider downloading newest files.');
+            } elseif ($fileSize !== $urlSize && ! $update) {
+                $this->line('<info>File Exists:</info> '.$urlFileName.' with different size as remote geonames file exists. You should consider downloading newest files.');
+
                 return true;
             } else {
                 // If we are here, we will re-download zip file, so it is worthwhile to remoeve the old txt version first
-                $extractedFilePath = $storagePath . '/' . $txtFileName;
+                $extractedFilePath = $storagePath.'/'.$txtFileName;
                 if (substr($urlFileName, -4) === '.zip' && file_exists($extractedFilePath)) {
-                    $this->line('<info>Removing Old File:</info> ' . basename($extractedFilePath));
+                    $this->line('<info>Removing Old File:</info> '.basename($extractedFilePath));
                     unlink($extractedFilePath);
                 }
             }
         }
 
         // Create download directory
-        if (!file_exists($storagePath)) {
+        if (! file_exists($storagePath)) {
             mkdir($storagePath, 0755, true);
         }
 
         // Create .gitignore if it does not exist in $storagePath
-        if (!file_exists($storagePath.'/.gitignore')) {
+        if (! file_exists($storagePath.'/.gitignore')) {
             $gitignore = "*\n!.gitignore\n";
-            file_put_contents($storagePath.'/.gitignore',$gitignore);
+            file_put_contents($storagePath.'/.gitignore', $gitignore);
         }
 
         // Open file and truncate it for writing (requires fopen_wrappers)
-        $targetFile = $storagePath . '/' . $urlFileName;
+        $targetFile = $storagePath.'/'.$urlFileName;
         $targetFP = fopen($targetFile, 'w+');
         if ($targetFP === false) {
-            throw new RuntimeException('Can not open file for writing: ' . $targetFile);
+            throw new RuntimeException('Can not open file for writing: '.$targetFile);
         }
 
         $sourceFP = fopen($url, 'r');
         if ($sourceFP === false) {
-            throw new RuntimeException('Can not open file for reading: ' . $url);
+            throw new RuntimeException('Can not open file for reading: '.$url);
         }
 
         $bufferSize = 1024 * 1024;
@@ -504,8 +510,8 @@ trait CommandTrait
         /* @var $output OutputStyle */
         $output = $this->getOutput();
         $bar = $output->createProgressBar($steps);
-        $bar->setFormat('<info>Downloading:</info> ' . $urlFileName . ' %bar% %percent%% <info>Remaining Time:</info> %remaining%');
-        while (!feof($sourceFP)) {
+        $bar->setFormat('<info>Downloading:</info> '.$urlFileName.' %bar% %percent%% <info>Remaining Time:</info> %remaining%');
+        while (! feof($sourceFP)) {
             fwrite($targetFP, stream_get_contents($sourceFP, $bufferSize));
             $bar->advance();
         }
@@ -513,7 +519,7 @@ trait CommandTrait
         $output->newLine();
 
         clearstatcache(true, $targetFile);
-        $this->line('<info>File Downloaded:</info> ' . $urlFileName . ' - ' . filesize($targetFile) . ' bytes.');
+        $this->line('<info>File Downloaded:</info> '.$urlFileName.' - '.filesize($targetFile).' bytes.');
 
         return true;
     }
@@ -521,53 +527,57 @@ trait CommandTrait
     /**
      * Unzip the file
      *
-     * @param  string $name
+     * @param  string  $name
      */
     protected function unZip($name)
     {
         $zipFileName = basename($this->files[$name]['url']);
-        if (!substr($zipFileName, -4) === '.zip')
-            throw new RuntimeException($zipFileName . ' does not have .zip extension');
+        if (! substr($zipFileName, -4) === '.zip') {
+            throw new RuntimeException($zipFileName.' does not have .zip extension');
+        }
 
         // Final file path
         $storagePath = config('geonames.storagePath');
-        $extractedFile = $this->files[$name]['filename'] . '.txt';
-        $path = $storagePath . '/' . $extractedFile;
+        $extractedFile = $this->files[$name]['filename'].'.txt';
+        $path = $storagePath.'/'.$extractedFile;
 
         // Open zip archive because we need the size of extracted file
         $zipArchive = new ZipArchive;
-        $zipArchive->open($storagePath . '/' . $zipFileName);
+        $zipArchive->open($storagePath.'/'.$zipFileName);
 
         if (file_exists($path)) {
             $uncompressedSize = $zipArchive->statName($extractedFile)['size'];
             $fileSize = filesize($path);
             if ($uncompressedSize !== $fileSize) {
-                $this->line('<info>Existing File:</info> ' . basename($path) . ' size does not match the one in ' . $zipFileName);
+                $this->line('<info>Existing File:</info> '.basename($path).' size does not match the one in '.$zipFileName);
             } else {
                 // Do not extract again
-                $this->line('<info>Existing File:</info> ' . 'Found ' . basename($path) . ' file extracted from ' . $zipFileName);
+                $this->line('<info>Existing File:</info> '.'Found '.basename($path).' file extracted from '.$zipFileName);
                 $zipArchive->close();
+
                 return;
             }
         }
         // File does not exist or size does not match
-        $this->line('<info>Extracting File:</info> ' . $extractedFile . ' from ' . $zipFileName . ' ...!!!Please Wait!!!...');
+        $this->line('<info>Extracting File:</info> '.$extractedFile.' from '.$zipFileName.' ...!!!Please Wait!!!...');
         // Extract file
-        $zipArchive->extractTo($storagePath . '/', $extractedFile);
+        $zipArchive->extractTo($storagePath.'/', $extractedFile);
         $zipArchive->close();
     }
 
     /**
      * Get Remote File Size
      *
-     * @param string $url remote address
-     * @return int|boolean URL size in bytes or false
+     * @param  string  $url  remote address
+     * @return int|bool URL size in bytes or false
      */
     protected function getUrlSize($url)
     {
         $data = get_headers($url, true);
-        if (isset($data['Content-Length']))
-            return (int)$data['Content-Length'];
+        if (isset($data['Content-Length'])) {
+            return (int) $data['Content-Length'];
+        }
+
         return false;
     }
 
@@ -591,22 +601,22 @@ trait CommandTrait
                 unset($data[$key]);
             }
         }
+
         return $data;
     }
-
 
     protected function updateFilesList()
     {
         // Get ISO codes for countries to import if there are any
         $countries = config('geonames.countries');
-        if (!empty($countries)) {
+        if (! empty($countries)) {
 
             unset($this->files['allCountries']);
             foreach ($countries as $country) {
                 $this->files[$country] = [
-                    'url' => 'http://download.geonames.org/export/dump/' . $country . '.zip',
+                    'url' => 'http://download.geonames.org/export/dump/'.$country.'.zip',
                     'filename' => $country,
-                    'table' => 'geonames_geonames'
+                    'table' => 'geonames_geonames',
                 ];
             }
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  * Time: 5:14 PM
  */
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateGeonamesIsoLanguageCodesTable extends Migration
 {
@@ -33,9 +34,9 @@ class CreateGeonamesIsoLanguageCodesTable extends Migration
     public function up()
     {
         Schema::create('geonames_iso_language_codes', function (Blueprint $table) {
-            $table->char('iso_639_3',3)->primary();
-            $table->char('iso_639_2',3)->unique()->nullable();
-            $table->char('iso_639_1',2)->unique()->nullable();
+            $table->char('iso_639_3', 3)->primary();
+            $table->char('iso_639_2', 3)->unique()->nullable();
+            $table->char('iso_639_1', 2)->unique()->nullable();
             $table->string('language_name', 200);
         });
     }
@@ -47,6 +48,6 @@ class CreateGeonamesIsoLanguageCodesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('geonames_iso_language_codes');
+        Schema::dropIfExists('geonames_iso_language_codes');
     }
 }

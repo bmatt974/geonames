@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  * Time: 5:14 PM
  */
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateGeonamesFeatureCodesTable extends Migration
 {
@@ -33,9 +34,9 @@ class CreateGeonamesFeatureCodesTable extends Migration
     public function up()
     {
         Schema::create('geonames_feature_codes', function (Blueprint $table) {
-            $table->string('code',11)->primary();
-            $table->string('name',100);
-            $table->string('description',500);
+            $table->string('code', 11)->primary();
+            $table->string('name', 100);
+            $table->string('description', 500);
         });
     }
 
@@ -46,6 +47,6 @@ class CreateGeonamesFeatureCodesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('geonames_feature_codes');
+        Schema::dropIfExists('geonames_feature_codes');
     }
 }

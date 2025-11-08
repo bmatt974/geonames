@@ -19,11 +19,12 @@
     "location"
   ],
   "require": {
+    "php": "^8.2|^8.3",
     "ext-zip": "*",
-    "illuminate/config": "*",
-    "illuminate/console": "*",
-    "illuminate/database": "*",
-    "illuminate/filesystem": "*"
+    "illuminate/config": "^5.2.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+    "illuminate/console": "^5.2.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+    "illuminate/database": "^5.2.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+    "illuminate/filesystem": "^5.2.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0"
   },
   "autoload": {
     "classmap": [
@@ -31,6 +32,13 @@
     ],
     "psr-4": {
       "Yurtesen\\Geonames\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Yurtesen\\Geonames\\GeonamesServiceProvider"
+      ]
     }
   }
 }
