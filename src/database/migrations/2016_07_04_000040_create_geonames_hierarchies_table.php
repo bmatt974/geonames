@@ -23,6 +23,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGeonamesHierarchiesTable extends Migration
 {
@@ -31,7 +32,7 @@ class CreateGeonamesHierarchiesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('geonames_hierarchies', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->create('geonames_hierarchies', function (Blueprint $table) {
             $table->integer('parent_id')->index()->unsigned();
             $table->foreign('parent_id')->references('geoname_id')->on('geonames_geonames')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('child_id')->index()->unsigned();
@@ -46,6 +47,6 @@ class CreateGeonamesHierarchiesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('geonames_hierarchies');
+        Schema::connection(config('geonames.connection'))->dropIfExists('geonames_hierarchies');
     }
 }

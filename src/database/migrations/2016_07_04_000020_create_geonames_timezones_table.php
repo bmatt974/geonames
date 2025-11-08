@@ -23,6 +23,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGeonamesTimezonesTable extends Migration
 {
@@ -31,7 +32,7 @@ class CreateGeonamesTimezonesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('geonames_timezones', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->create('geonames_timezones', function (Blueprint $table) {
             $table->string('timezone_id', 40)->primary();
             $table->char('country_code', 2)->index();
             // We are adding this constraint from geonames_country_infos migration
@@ -47,6 +48,6 @@ class CreateGeonamesTimezonesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('geonames_timezones');
+        Schema::connection(config('geonames.connection'))->dropIfExists('geonames_timezones');
     }
 }

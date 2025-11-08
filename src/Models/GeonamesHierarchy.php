@@ -64,4 +64,12 @@ class GeonamesHierarchy extends Model
      * Indicates if the model should be timestamped.
      */
     public bool $timestamps = false;
+
+    /**
+     * Get the database connection for the model.
+     */
+    public function getConnectionName(): ?string
+    {
+        return config('geonames.connection');
+    }
 }

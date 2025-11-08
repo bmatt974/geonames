@@ -23,6 +23,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGeonamesCountryInfosTable extends Migration
 {
@@ -31,7 +32,7 @@ class CreateGeonamesCountryInfosTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('geonames_country_infos', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->create('geonames_country_infos', function (Blueprint $table) {
             $table->char('iso', 2)->unique();
             $table->char('iso3', 3)->unique();
             $table->char('iso_numeric', 3)->unique();
@@ -59,7 +60,7 @@ class CreateGeonamesCountryInfosTable extends Migration
         // DB::statement('ALTER TABLE geonames_country_infos CHANGE iso_numeric iso_numeric SMALLINT(3) UNSIGNED ZEROFILL NOT NULL');
 
         // Now can add the foreign key constraint to timezones table also
-        Schema::table('geonames_timezones', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->table('geonames_timezones', function (Blueprint $table) {
             $table->foreign('country_code')->references('iso')->on('geonames_country_infos')->onUpdate('cascade')->onDelete('cascade');
         });
     }
@@ -70,9 +71,9 @@ class CreateGeonamesCountryInfosTable extends Migration
     public function down(): void
     {
         // First drop the foreign constraint from timezones table
-        Schema::table('geonames_timezones', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->table('geonames_timezones', function (Blueprint $table) {
             $table->dropForeign('geonames_timezones_country_code_foreign');
         });
-        Schema::dropIfExists('geonames_country_infos');
+        Schema::connection(config('geonames.connection'))->dropIfExists('geonames_country_infos');
     }
 }

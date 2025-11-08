@@ -233,15 +233,15 @@ trait CommandTrait
         ];
 
         // This will greatly improve the performance of inserts
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::connection(config('geonames.connection'))->statement('SET FOREIGN_KEY_CHECKS=0;');
         $tableName = $this->files[$name]['table'];
         // If table is empty or we are refreshing, truncate it unless it was recently truncated!
         if (! in_array($tableName, $this->truncatedTables) &&
-            (DB::table($tableName)->count() === 0 || $refresh)
+            (DB::connection(config('geonames.connection'))->table($tableName)->count() === 0 || $refresh)
         ) {
             $this->truncatedTables[] = $tableName;
             $this->line('<info>Database:</info> Truncating table '.$tableName);
-            DB::table($tableName)->truncate();
+            DB::connection(config('geonames.connection'))->table($tableName)->truncate();
         }
         $buffer = [];
         // If it is a custom country code, use allCountries
@@ -266,7 +266,7 @@ trait CommandTrait
             $this->updateOrInsertMultiple($tableName, $buffer);
         }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        DB::connection(config('geonames.connection'))->statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**
@@ -413,7 +413,7 @@ trait CommandTrait
         $sql .= 'ON DUPLICATE KEY UPDATE ';
         $sql .= $updateList;
 
-        return DB::insert($sql, $valueArray);
+        return DB::connection(config('geonames.connection'))->insert($sql, $valueArray);
     }
 
     /**

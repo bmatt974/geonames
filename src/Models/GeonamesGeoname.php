@@ -111,6 +111,14 @@ class GeonamesGeoname extends Model
     public bool $timestamps = false;
 
     /**
+     * Get the database connection for the model.
+     */
+    public function getConnectionName(): ?string
+    {
+        return config('geonames.connection');
+    }
+
+    /**
      * Useful columns to select in scopes
      */
     private array $usefulScopeColumns = [

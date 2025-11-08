@@ -103,6 +103,14 @@ class GeonamesCountryInfo extends Model
     public bool $timestamps = false;
 
     /**
+     * Get the database connection for the model.
+     */
+    public function getConnectionName(): ?string
+    {
+        return config('geonames.connection');
+    }
+
+    /**
      * Get the timezone for this country
      */
     public function timezone(): HasOne

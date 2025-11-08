@@ -72,6 +72,14 @@ class GeonamesAdmin1Code extends Model
     public bool $timestamps = false;
 
     /**
+     * Get the database connection for the model.
+     */
+    public function getConnectionName(): ?string
+    {
+        return config('geonames.connection');
+    }
+
+    /**
      * Get the geoname for this admin1 code
      */
     public function geoname(): HasOne

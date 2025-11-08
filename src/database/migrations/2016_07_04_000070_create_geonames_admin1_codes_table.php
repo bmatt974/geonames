@@ -23,6 +23,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGeonamesAdmin1CodesTable extends Migration
 {
@@ -31,7 +32,7 @@ class CreateGeonamesAdmin1CodesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('geonames_admin1_codes', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->create('geonames_admin1_codes', function (Blueprint $table) {
             $table->string('code', 20)->unique();
             $table->string('name', 100);
             $table->string('name_ascii', 100);
@@ -45,6 +46,6 @@ class CreateGeonamesAdmin1CodesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('geonames_admin1_codes');
+        Schema::connection(config('geonames.connection'))->dropIfExists('geonames_admin1_codes');
     }
 }

@@ -23,6 +23,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGeonamesAlternateNamesTable extends Migration
 {
@@ -31,7 +32,7 @@ class CreateGeonamesAlternateNamesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('geonames_alternate_names', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->create('geonames_alternate_names', function (Blueprint $table) {
             $table->integer('alternate_name_id')->primary()->unsigned();
             $table->integer('geoname_id')->index()->unsigned();
             $table->foreign('geoname_id')->references('geoname_id')->on('geonames_geonames')->onUpdate('cascade')->onDelete('cascade');
@@ -49,6 +50,6 @@ class CreateGeonamesAlternateNamesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('geonames_alternate_names');
+        Schema::connection(config('geonames.connection'))->dropIfExists('geonames_alternate_names');
     }
 }

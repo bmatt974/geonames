@@ -60,7 +60,7 @@ class Seed extends Command
             $this->downloadAllFiles($updateFiles);
             // Check if we have all the tables
             foreach ($this->getFilesArray() as $name => $file) {
-                if (Schema::hasTable($file['table'])) {
+                if (Schema::connection(config('geonames.connection'))->hasTable($file['table'])) {
                     $this->parseGeonamesText($name, $refresh);
                 } else {
                     throw new RuntimeException($file['table'].' table not found. Did you run geoname:install then run migrate ?');

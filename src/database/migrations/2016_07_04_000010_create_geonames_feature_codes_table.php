@@ -23,6 +23,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGeonamesFeatureCodesTable extends Migration
 {
@@ -31,7 +32,7 @@ class CreateGeonamesFeatureCodesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('geonames_feature_codes', function (Blueprint $table) {
+        Schema::connection(config('geonames.connection'))->create('geonames_feature_codes', function (Blueprint $table) {
             $table->string('code', 11)->primary();
             $table->string('name', 100);
             $table->string('description', 500);
@@ -43,6 +44,6 @@ class CreateGeonamesFeatureCodesTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('geonames_feature_codes');
+        Schema::connection(config('geonames.connection'))->dropIfExists('geonames_feature_codes');
     }
 }

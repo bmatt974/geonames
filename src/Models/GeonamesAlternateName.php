@@ -78,6 +78,14 @@ class GeonamesAlternateName extends Model
     public bool $timestamps = false;
 
     /**
+     * Get the database connection for the model.
+     */
+    public function getConnectionName(): ?string
+    {
+        return config('geonames.connection');
+    }
+
+    /**
      * Get the geoname that owns this alternate name
      */
     public function geoname(): BelongsTo

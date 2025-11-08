@@ -25,6 +25,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Database Connection
+    |--------------------------------------------------------------------------
+    |
+    | The database connection to use for geonames tables.
+    | You can specify a different connection if you want to store geonames data
+    | in a separate database.
+    |
+    */
+    'connection' => env('GEONAMES_CONNECTION', 'mysql'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Keep TXT Files
     |--------------------------------------------------------------------------
     |
