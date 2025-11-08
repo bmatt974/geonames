@@ -33,19 +33,15 @@ trait CommandTrait
 {
     /**
      * Buffer size to use when executing SQL statements in number of rows
-     * I experimented and 1000 is a very reasonable value. Larvger values
+     * I experimented and 1000 is a very reasonable value. Larger values
      * (5000+) may cause too many placeholders error in eloquent.
-     *
-     * @var int
      */
-    protected $bufferSize = 1000;
+    protected int $bufferSize = 1000;
 
     /**
      * This is used to map continent keys with geoname_id values
-     *
-     * @var array
      */
-    protected $continentCodes = [
+    protected array $continentCodes = [
         'AF' => 6255146,
         'AS' => 6255147,
         'EU' => 6255148,
@@ -57,10 +53,8 @@ trait CommandTrait
 
     /**
      * This is the main list of url,filename and table values we will work with
-     *
-     * @var array
      */
-    protected $files = [
+    protected array $files = [
         'timeZones' => [
             'url' => 'http://download.geonames.org/export/dump/timeZones.txt',
             'filename' => 'timeZones',
@@ -112,10 +106,8 @@ trait CommandTrait
     /**
      * List of tables which are already truncated for avoiding double truncation
      * in case if we are importing multiple files into same table.
-     *
-     * @var array
      */
-    protected $truncatedTables = [];
+    protected array $truncatedTables = [];
 
     /**
      * Parses the array created from different geonames file lines
@@ -124,7 +116,7 @@ trait CommandTrait
      * @param  string  $name  The config name of the file
      * @param  bool  $refresh  Set true for truncating table before inserting rows
      */
-    protected function parseGeonamesText($name, $refresh = false)
+    protected function parseGeonamesText(string $name, bool $refresh = false): void
     {
         $fieldsArray = [
             'allCountries' => function ($row) {
@@ -278,12 +270,9 @@ trait CommandTrait
     }
 
     /**
-     * Parse a given file and insert into databaase using closure.
-     *
-     * @param  string  $name
-     * @return void
+     * Parse a given file and insert into database using closure.
      */
-    protected function parseFile($name, Closure $callback)
+    protected function parseFile(string $name, Closure $callback): void
     {
         $url = $this->files[$name]['url'];
         $basename = basename($url);
@@ -344,10 +333,9 @@ trait CommandTrait
      * Read the file and get line count
      * Not very efficient but does the job well...
      *
-     * @param  string  $path
      * @return int $count
      */
-    protected function getLineCount($path)
+    protected function getLineCount(string $path): int
     {
         $fh = fopen($path, 'r');
         if (! $fh) {
@@ -390,12 +378,8 @@ trait CommandTrait
      * This speeds up inserts ~50 times compared to line-by-line inserts.
      *
      * Note: The $data must be an array of arrays and have at least 2 elements.
-     *
-     * @param  string  $tableName
-     * @param  array (array())  $data
-     * @return bool
      */
-    protected function updateOrInsertMultiple($tableName, $data)
+    protected function updateOrInsertMultiple(string $tableName, array $data): bool
     {
         $fields = '`'.implode('`,`', array_keys($data[0])).'`';
         // Create strings for variables
@@ -433,11 +417,11 @@ trait CommandTrait
     }
 
     /**
-     * Download a file if it does not exist
+     * Download all files
      *
      * @param  bool  $update  Update files
      */
-    protected function downloadAllFiles($update = false)
+    protected function downloadAllFiles(bool $update = false): void
     {
         $files = array_keys($this->getFilesArray());
         foreach ($files as $name) {
@@ -448,12 +432,10 @@ trait CommandTrait
     /**
      * Download a file if it does not exist
      *
-     * @param  string  $url  Download URL
-     * @param  string  $path  Storage path
-     * @param  bool  $force  Force re-download of files
-     * @return bool
+     * @param  string  $name  File name from config
+     * @param  bool  $update  Force re-download of files
      */
-    protected function downloadFile($name, $update = false)
+    protected function downloadFile(string $name, bool $update = false): bool
     {
         $url = $this->files[$name]['url'];
         $storagePath = config('geonames.storagePath');
@@ -526,10 +508,8 @@ trait CommandTrait
 
     /**
      * Unzip the file
-     *
-     * @param  string  $name
      */
-    protected function unZip($name)
+    protected function unZip(string $name): void
     {
         $zipFileName = basename($this->files[$name]['url']);
         if (! substr($zipFileName, -4) === '.zip') {
@@ -569,9 +549,9 @@ trait CommandTrait
      * Get Remote File Size
      *
      * @param  string  $url  remote address
-     * @return int|bool URL size in bytes or false
+     * @return int|false URL size in bytes or false
      */
-    protected function getUrlSize($url)
+    protected function getUrlSize(string $url): int|false
     {
         $data = get_headers($url, true);
         if (isset($data['Content-Length'])) {
@@ -585,10 +565,8 @@ trait CommandTrait
      * Returns files array after removing entries in
      * ignoreTables config option and adding custom countries from
      * countries config option if necessary
-     *
-     * @return array
      */
-    protected function getFilesArray()
+    protected function getFilesArray(): array
     {
         static $firstRun = true;
         if ($firstRun) {
@@ -605,7 +583,7 @@ trait CommandTrait
         return $data;
     }
 
-    protected function updateFilesList()
+    protected function updateFilesList(): void
     {
         // Get ISO codes for countries to import if there are any
         $countries = config('geonames.countries');

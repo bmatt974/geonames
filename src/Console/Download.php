@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -28,30 +29,14 @@ class Download extends Command
 {
     use CommandTrait;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'geonames:download 
-                            {--update : Updates the downloaded files to latest versions}
-                           ';
+    protected $signature = 'geonames:download
+                            {--update : Updates the downloaded files to latest versions}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Download geonames database txt/zip files';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    public function handle(): void
     {
-        $update = $this->input->getOption('update');
+        $update = $this->option('update');
         $this->downloadAllFiles($update);
     }
 }

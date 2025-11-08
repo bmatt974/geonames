@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -23,6 +24,8 @@
 namespace Yurtesen\Geonames\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Yurtesen\Geonames\Models\GeonamesAdmin1Code
@@ -30,73 +33,57 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $code
  * @property string $name
  * @property string $name_ascii
- * @property integer $geoname_id
+ * @property int $geoname_id
  * @property-read \Yurtesen\Geonames\Models\GeonamesGeoname $geoname
  * @property-read \Illuminate\Database\Eloquent\Collection|\Yurtesen\Geonames\Models\GeonamesHierarchy[] $hierarchies
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAdmin1Code whereCode($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAdmin1Code whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAdmin1Code whereNameAscii($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAdmin1Code whereGeonameId($value)
+ *
  * @mixin \Eloquent
  */
 class GeonamesAdmin1Code extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'geoname_id';
+    protected string $primaryKey = 'geoname_id';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
+    public bool $timestamps = false;
 
     /**
-     * One-to-One relation with GeonamesGeonames
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get the geoname for this admin1 code
      */
-    public function geoname()
+    public function geoname(): HasOne
     {
         return $this->hasOne(GeonamesGeoname::class, 'geoname_id', 'geoname_id');
     }
 
     /**
-     * One-to-Many relation with GeonamesGeonames
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get hierarchies where this is the parent
      */
-    public function hierarchies()
+    public function hierarchies(): HasMany
     {
         return $this->hasMany(GeonamesHierarchy::class, 'parent_id', 'geoname_id');
     }
-
-
 }

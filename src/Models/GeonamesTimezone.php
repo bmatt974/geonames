@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -32,51 +33,39 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $gmt_offset
  * @property float $dst_offset
  * @property float $raw_offset
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesTimezone whereTimezoneId($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesTimezone whereCountryCode($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesTimezone whereGmtOffset($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesTimezone whereDstOffset($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesTimezone whereRawOffset($value)
+ *
  * @mixin \Eloquent
  */
 class GeonamesTimezone extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'timezone_id';
+    protected string $primaryKey = 'timezone_id';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
-    
-
+    public bool $timestamps = false;
 }

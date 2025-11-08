@@ -28,10 +28,8 @@ class CreateGeonamesAdmin1CodesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('geonames_admin1_codes', function (Blueprint $table) {
             $table->string('code', 20)->unique();
@@ -44,10 +42,8 @@ class CreateGeonamesAdmin1CodesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('geonames_admin1_codes');
     }

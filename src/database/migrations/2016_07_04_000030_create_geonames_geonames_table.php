@@ -28,10 +28,8 @@ class CreateGeonamesGeonamesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('geonames_geonames', function (Blueprint $table) {
             $table->integer('geoname_id')->primary()->unsigned();
@@ -59,10 +57,8 @@ class CreateGeonamesGeonamesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('geonames_geonames');
     }

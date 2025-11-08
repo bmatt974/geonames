@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
 namespace Yurtesen\Geonames\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Yurtesen\Geonames\Models\GeonamesCountryInfo
@@ -33,10 +35,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $fips
  * @property string $country
  * @property string $capital
- * @property integer $area
- * @property integer $population
+ * @property int $area
+ * @property int $population
  * @property string $continent_code
- * @property integer $continent_id
+ * @property int $continent_id
  * @property string $tld
  * @property string $currency_code
  * @property string $currency_name
@@ -44,11 +46,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $postal_code_format
  * @property string $postal_code_regex
  * @property string $languages
- * @property integer $geoname_id
+ * @property int $geoname_id
  * @property string $neighbors
  * @property string $equivalent_fips_code
  * @property-read \Yurtesen\Geonames\Models\GeonamesTimezone $timezone
  * @property-read \Yurtesen\Geonames\Models\GeonamesGeoname $continent
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesCountryInfo whereIso($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesCountryInfo whereIso3($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesCountryInfo whereIsoNumeric($value)
@@ -69,66 +72,49 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesCountryInfo whereGeonameId($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesCountryInfo whereNeighbors($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesCountryInfo whereEquivalentFipsCode($value)
+ *
  * @mixin \Eloquent
  */
 class GeonamesCountryInfo extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'iso';
+    protected string $primaryKey = 'iso';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
+    public bool $timestamps = false;
 
     /**
-     * One-to-One relation with GeonamesTimezone
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get the timezone for this country
      */
-    public function timezone()
+    public function timezone(): HasOne
     {
         return $this->hasOne(GeonamesTimezone::class, 'country_code');
     }
 
     /**
-     * One-to-One relation with GeonamesGeonames
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get the continent for this country
      */
-    public function continent()
+    public function continent(): HasOne
     {
-        return $this->hasOne(GeonamesGeoname::class,'geoname_id','continent_id');
+        return $this->hasOne(GeonamesGeoname::class, 'geoname_id', 'continent_id');
     }
-
-
 }

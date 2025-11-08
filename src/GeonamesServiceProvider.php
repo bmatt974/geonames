@@ -29,10 +29,8 @@ class GeonamesServiceProvider extends ServiceProvider
 {
     /**
      * Artisan commands
-     *
-     * @var array
      */
-    protected $serviceCommands = [
+    protected array $serviceCommands = [
         'Yurtesen\Geonames\Console\Download',
         'Yurtesen\Geonames\Console\Install',
         'Yurtesen\Geonames\Console\Seed',
@@ -40,12 +38,9 @@ class GeonamesServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-
         $this->publishes([
             __DIR__.'/database/migrations' => base_path('database/migrations'),
         ], 'migrations');
@@ -59,10 +54,8 @@ class GeonamesServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->commands($this->serviceCommands);
     }

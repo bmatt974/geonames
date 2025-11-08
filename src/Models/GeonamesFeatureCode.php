@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -30,49 +31,37 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $code
  * @property string $name
  * @property string $description
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesFeatureCode whereCode($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesFeatureCode whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesFeatureCode whereDescription($value)
+ *
  * @mixin \Eloquent
  */
 class GeonamesFeatureCode extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'code';
+    protected string $primaryKey = 'code';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
-    
-
+    public bool $timestamps = false;
 }

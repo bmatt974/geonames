@@ -23,7 +23,11 @@
 
 namespace Yurtesen\Geonames\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -83,89 +87,66 @@ class GeonamesGeoname extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'geoname_id';
+    protected string $primaryKey = 'geoname_id';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
+    public bool $timestamps = false;
 
     /**
-     *  Most useful fields which we want in every result which utilize our scopes
-     *
-     * @var array
+     * Useful columns to select in scopes
      */
-    private $usefulScopeColumns = [
+    private array $usefulScopeColumns = [
         'geonames_geonames.geoname_id',
         'geonames_geonames.name',
         'geonames_geonames.country_code',
     ];
 
     /**
-     * One-to-One relation with GeonamesAlternateNames
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get alternate names for this geoname
      */
-    public function alternateName()
+    public function alternateName(): HasMany
     {
         return $this->hasMany(GeonamesAlternateName::class, 'geoname_id', 'geoname_id');
     }
 
     /**
-     * One-to-One relation with GeonamesTimezones
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get timezone for this geoname
      */
-    public function timeZone()
+    public function timeZone(): HasOne
     {
         return $this->hasOne(GeonamesTimezone::class, 'timezone_id', 'timezone_id');
     }
 
     /**
-     * One-to-One relation with GeonamesCountryInfos
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * Get country info for this geoname
      */
-    public function countryInfo()
+    public function countryInfo(): BelongsTo
     {
-        return $this->hasOne(GeonamesCountryInfo::class, 'iso', 'country_code');
+        return $this->belongsTo(GeonamesCountryInfo::class, 'country_code', 'iso');
     }
 
     /**
-     * Return admin1 information in result
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Illuminate\Database\Query\Builder
+     * Scope to add admin1 information
      */
-    public function scopeAdmin1($query)
+    public function scopeAdmin1(Builder $query): Builder
     {
         $table = 'geonames_geonames';
 
@@ -188,12 +169,9 @@ class GeonamesGeoname extends Model
     }
 
     /**
-     * Return country information in result
-     *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Query\Builder
+     * Scope to add country information
      */
-    public function scopeAddCountryInfo($query)
+    public function scopeAddCountryInfo(Builder $query): Builder
     {
         $table = 'geonames_geonames';
 
@@ -214,55 +192,25 @@ class GeonamesGeoname extends Model
     }
 
     /**
-     * Build a query to find major cities. Accepts wildcards eg. 'Helsin%'
-     *
-     * Suggested index for search:
-     * ALTER TABLE geonames_geonames ADD INDEX geonames_geonames_feature_name_index
-     *                                                          (`feature_class`,`feature_code`,`name`);
-     * and if you will limit queries by country you should also use:
-     * ALTER TABLE geonames_geonames ADD INDEX geonames_geonames_country_feature_name_index
-     *                                                          (`country_code`,`feature_class`,`feature_code`,`name`);
-     *
-     *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $name
-     * @param  array  $featureCodes  List of feature codes to use when returning results
-     *                               defaults to ['PPLC','PPLA','PPLA2', 'PPLA3']
-     * @return \Illuminate\Database\Query\Builder
+     * Scope to search cities
      */
-    public function scopeCity($query, $name = null, $featureCodes = ['PPLC', 'PPLA', 'PPLA2', 'PPLA3'])
+    public function scopeCity(Builder $query, ?string $name = null, array $featureCodes = ['PPLC', 'PPLA', 'PPLA2', 'PPLA3']): Builder
     {
         return $this->scopeSearchByFeature($query, $name, 'P', $featureCodes);
     }
 
     /**
-     * Build a query to find major ccountries. Accepts wildcards eg. '%Finland%'
-     *
-     * Suggested index for search:
-     * ALTER TABLE geonames_geonames ADD INDEX geonames_geonames_feature_name_index
-     *                                                          (`feature_class`,`feature_code`,`name`);
-     *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $name
-     * @param  array  $featureCodes  List of feature codes to use when returning results
-     *                               defaults to ['PCLI']
-     * @return \Illuminate\Database\Query\Builder
+     * Scope to search countries
      */
-    public function scopeCountry($query, $name = null, $featureCodes = ['PCLI'])
+    public function scopeCountry(Builder $query, ?string $name = null, array $featureCodes = ['PCLI']): Builder
     {
         return $this->scopeSearchByFeature($query, $name, 'A', $featureCodes);
     }
 
     /**
-     * Generic query used by scopes, but you can call it with custom feataure codes.
-     *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $name
-     * @param  string  $feature_class  The 1 character feature class
-     * @param  array  $featureCodes  List of feature codes to use when returning results
-     * @return \Illuminate\Database\Query\Builder
+     * Scope to search by feature class and codes
      */
-    public function scopeSearchByFeature($query, $name = null, $feature_class = null, $featureCodes = null)
+    public function scopeSearchByFeature(Builder $query, ?string $name = null, ?string $feature_class = null, ?array $featureCodes = null): Builder
     {
         $table = 'geonames_geonames';
 

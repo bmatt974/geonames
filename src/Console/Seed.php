@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -22,56 +23,38 @@
 
 namespace Yurtesen\Geonames\Console;
 
-use RuntimeException;
-use Schema;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
+use RuntimeException;
 
 class Seed extends Command
 {
-    /**
-     * This includes some common functions used by commands
-     */
     use CommandTrait;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'geonames:seed 
-                            {--refresh : Truncate tables and re-insert data from scratch} 
+    protected $signature = 'geonames:seed
+                            {--refresh : Truncate tables and re-insert data from scratch}
                             {--update-files : Update geonames files before inserting data to database}
-                            {--table= : Only import the given database table}
-                           ';
+                            {--table= : Only import the given database table}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Seed the database from geonames files';
 
-    /**
-     * Execute the console command.
-     *
-     * @throws RuntimeException;
-     * @return mixed
-     */
-    public function handle()
+    public function handle(): void
     {
-        $updateFiles = $this->input->getOption('update-files');
-        $refresh = $this->input->getOption('refresh');
-        $table = $this->input->getOption('table');
+        $updateFiles = $this->option('update-files');
+        $refresh = $this->option('refresh');
+        $table = $this->option('table');
 
         if (isset($table)) {
             foreach ($this->files as $name => $file) {
                 if ($file['table'] == $table) {
                     $this->downloadFile($name, $updateFiles);
                     $this->parseGeonamesText($name, $refresh);
+
                     return;
                 }
             }
             $this->line('<error>Table Not Found: </error> Table '.$table.'not found in configuration');
+
             return;
         } else {
             $this->downloadAllFiles($updateFiles);
@@ -80,7 +63,7 @@ class Seed extends Command
                 if (Schema::hasTable($file['table'])) {
                     $this->parseGeonamesText($name, $refresh);
                 } else {
-                    throw new RuntimeException($file['table'] . ' table not found. Did you run geoname:install then run migrate ?');
+                    throw new RuntimeException($file['table'].' table not found. Did you run geoname:install then run migrate ?');
                 }
             }
         }

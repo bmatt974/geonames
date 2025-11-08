@@ -28,10 +28,8 @@ class CreateGeonamesCountryInfosTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('geonames_country_infos', function (Blueprint $table) {
             $table->char('iso', 2)->unique();
@@ -68,10 +66,8 @@ class CreateGeonamesCountryInfosTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         // First drop the foreign constraint from timezones table
         Schema::table('geonames_timezones', function (Blueprint $table) {

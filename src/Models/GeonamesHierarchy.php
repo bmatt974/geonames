@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -27,52 +28,40 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Yurtesen\Geonames\Models\GeonamesHierarchy
  *
- * @property integer $parent_id
- * @property integer $child_id
+ * @property int $parent_id
+ * @property int $child_id
  * @property string $type
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesHierarchy whereParentId($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesHierarchy whereChildId($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesHierarchy whereType($value)
+ *
  * @mixin \Eloquent
  */
 class GeonamesHierarchy extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'parent_id';
+    protected string $primaryKey = 'parent_id';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
-    
-
+    public bool $timestamps = false;
 }

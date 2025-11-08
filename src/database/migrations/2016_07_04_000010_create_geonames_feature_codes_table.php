@@ -28,10 +28,8 @@ class CreateGeonamesFeatureCodesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('geonames_feature_codes', function (Blueprint $table) {
             $table->string('code', 11)->primary();
@@ -42,10 +40,8 @@ class CreateGeonamesFeatureCodesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('geonames_feature_codes');
     }

@@ -28,10 +28,8 @@ class CreateGeonamesIsoLanguageCodesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('geonames_iso_language_codes', function (Blueprint $table) {
             $table->char('iso_639_3', 3)->primary();
@@ -43,10 +41,8 @@ class CreateGeonamesIsoLanguageCodesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('geonames_iso_language_codes');
     }

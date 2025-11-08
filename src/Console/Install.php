@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -28,44 +29,16 @@ use Illuminate\Support\ServiceProvider;
 
 class Install extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'geonames:install {--force : Overwrite any existing files.}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Publish the migrations and config';
 
-    /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * Create a new Constructor instance.
-     *
-     * @param Filesystem $files
-     */
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $files)
     {
         parent::__construct();
-        $this->files = $files;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    public function handle(): void
     {
         $paths = ServiceProvider::pathsToPublish(
             'Yurtesen\Geonames\GeonamesServiceProvider'
@@ -79,19 +52,12 @@ class Install extends Command
             }
         }
 
-        $this->info("Installation complete!");
+        $this->info('Installation complete!');
     }
 
-    /**
-     * Publish the file to the given path.
-     *
-     * @param  string $from
-     * @param  string $to
-     * @return void
-     */
-    protected function publishFile($from, $to)
+    protected function publishFile(string $from, string $to): void
     {
-        if (!$this->files->exists($to) || $this->option('force')) {
+        if (! $this->files->exists($to) || $this->option('force')) {
             $this->createParentDirectory(dirname($to));
 
             $this->files->copy($from, $to);
@@ -100,21 +66,14 @@ class Install extends Command
         }
     }
 
-    /**
-     * Publish the directory to the given directory.
-     *
-     * @param  string $from
-     * @param  string $to
-     * @return void
-     */
-    protected function publishDirectory($from, $to)
+    protected function publishDirectory(string $from, string $to): void
     {
         $toContents = $this->files->files($to);
         $fromContents = $this->files->files($from);
 
         foreach ($fromContents as $file) {
-            $newFile = $to . DIRECTORY_SEPARATOR . $this->files->name($file) . '.' . $this->files->extension($file);
-            if ($this->files->isFile($file) && (!in_array($newFile, $toContents) || $this->option('force'))) {
+            $newFile = $to.DIRECTORY_SEPARATOR.$this->files->name($file).'.'.$this->files->extension($file);
+            if ($this->files->isFile($file) && (! in_array($newFile, $toContents) || $this->option('force'))) {
                 $this->files->copy($file, $newFile);
             }
         }
@@ -122,33 +81,19 @@ class Install extends Command
         $this->status($from, $to, 'Directory');
     }
 
-    /**
-     * Create the directory to house the published files if needed.
-     *
-     * @param  string $directory
-     * @return void
-     */
-    protected function createParentDirectory($directory)
+    protected function createParentDirectory(string $directory): void
     {
-        if (!$this->files->isDirectory($directory)) {
+        if (! $this->files->isDirectory($directory)) {
             $this->files->makeDirectory($directory, 0755, true);
         }
     }
 
-    /**
-     * Write a status message to the console.
-     *
-     * @param  string $from
-     * @param  string $to
-     * @param  string $type
-     * @return void
-     */
-    protected function status($from, $to, $type)
+    protected function status(string $from, string $to, string $type): void
     {
         $from = str_replace(base_path(), '', realpath($from));
 
         $to = str_replace(base_path(), '', realpath($to));
 
-        $this->line('<info>Copied ' . $type . '</info> <comment>[' . $from . ']</comment> <info>To</info> <comment>[' . $to . ']</comment>');
+        $this->line('<info>Copied '.$type.'</info> <comment>['.$from.']</comment> <info>To</info> <comment>['.$to.']</comment>');
     }
 }

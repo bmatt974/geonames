@@ -28,10 +28,8 @@ class CreateGeonamesHierarchiesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('geonames_hierarchies', function (Blueprint $table) {
             $table->integer('parent_id')->index()->unsigned();
@@ -45,10 +43,8 @@ class CreateGeonamesHierarchiesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('geonames_hierarchies');
     }

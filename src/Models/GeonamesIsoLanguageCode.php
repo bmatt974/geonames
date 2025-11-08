@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -31,48 +32,38 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $iso_639_2
  * @property string $iso_639_1
  * @property string $language_name
+ *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesIsoLanguageCode whereIso6393($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesIsoLanguageCode whereIso6392($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesIsoLanguageCode whereIso6391($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesIsoLanguageCode whereLanguageName($value)
+ *
  * @mixin \Eloquent
  */
-class GeonamesIsoLanguageCode extends Model {
+class GeonamesIsoLanguageCode extends Model
+{
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [
-    ];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
-    protected $hidden = [
-    ];
+    protected array $hidden = [];
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'iso_639_3';
+    protected string $primaryKey = 'iso_639_3';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = false;
+    public bool $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = false;
-
+    public bool $timestamps = false;
 }
