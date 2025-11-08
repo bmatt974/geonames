@@ -43,7 +43,7 @@ return [
     | This is the path to downloaded files and temporary files
     |
     */
-    'storagePath' => storage_path().'/meta/geonames',
+    'storagePath' => storage_path().'/app/geonames',
 
     /*
     |--------------------------------------------------------------------------
