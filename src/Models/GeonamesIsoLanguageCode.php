@@ -45,27 +45,27 @@ class GeonamesIsoLanguageCode extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = [];
+    protected $fillable = [];
 
     /**
      * The attributes that should be hidden for arrays.
      */
-    protected array $hidden = [];
+    protected $hidden = [];
 
     /**
      * The primary key for the model.
      */
-    protected string $primaryKey = 'iso_639_3';
+    protected $primaryKey = 'iso_639_3';
 
     /**
      * Indicates if the IDs are auto-incrementing.
      */
-    public bool $incrementing = false;
+    public $incrementing = false;
 
     /**
      * Indicates if the model should be timestamped.
      */
-    public bool $timestamps = false;
+    public $timestamps = false;
 
     /**
      * Get the database connection for the model.
