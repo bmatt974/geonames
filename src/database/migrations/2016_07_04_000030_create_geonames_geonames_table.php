@@ -53,6 +53,10 @@ class CreateGeonamesGeonamesTable extends Migration
             $table->string('timezone_id', 40)->index()->nullable();
             $table->foreign('timezone_id')->references('timezone_id')->on('geonames_timezones')->onUpdate('cascade')->onDelete('cascade');
             $table->date('modified_at');
+
+            $table->index(['country_code', 'admin1_code']);
+            $table->index(['feature_class', 'feature_code']);
+            $table->index(['ascii_name', 'feature_code']);
         });
     }
 

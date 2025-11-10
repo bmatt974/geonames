@@ -38,8 +38,8 @@ class CreateGeonamesAlternateNamesTable extends Migration
             $table->foreign('geoname_id')->references('geoname_id')->on('geonames_geonames')->onUpdate('cascade')->onDelete('cascade');
             $table->string('iso_language', 7)->nullable();
             $table->string('alternate_name', 400)->nullable();
-            $table->boolean('isPreferredName');
-            $table->boolean('isShortName');
+            $table->boolean('isPreferredName')->index();
+            $table->boolean('isShortName')->index();
             $table->boolean('isColloquial');
             $table->boolean('isHistoric');
         });
