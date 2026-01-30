@@ -56,17 +56,17 @@ Please see the *Wiki* pages for implementation details.
 ## Tables
 GeoNames file names and corresponding table names created in your database.
 
-|Filename             |Tablename                |
-|---------------------|-------------------------|
-|timeZones.txt        |geonames_timezones       |
-|allCountries.zip     |geonames_geonames        |
-|countryInfo.txt      |geonames_country_infos   |
-|iso-languagecodes.txt|geonames_language_codes  |
-|alternateNames.zip   |geonames_alternate_names |
-|hierarchy.zip        |geonames_hierarchies     |
-|admin1CodesASCII.txt |geonames_admin1_codes    |
-|admin2Codes.txt      |geonames_admin2_codes    |
-|featureCodes_en.txt  |geonames_feature_codes   |
+| Filename              |Tablename                |
+|-----------------------|-------------------------|
+| timeZones.txt         |geonames_timezones       |
+| allCountries.zip      |geonames_geonames        |
+| countryInfo.txt       |geonames_country_infos   |
+| iso-languagecodes.txt |geonames_language_codes  |
+| alternateNamesV2.zip  |geonames_alternate_names |
+| hierarchy.zip         |geonames_hierarchies     |
+| admin1CodesASCII.txt  |geonames_admin1_codes    |
+| admin2Codes.txt       |geonames_admin2_codes    |
+| featureCodes_en.txt   |geonames_feature_codes   |
 
 ## If You Need Help
 Please check the [wiki](https://github.com/yurtesen/geonames/wiki) for more information about how to utilize the package efficiently and usage examples. If something does not work or if you have a suggestion, please do not hesitate to use the issue tracker.

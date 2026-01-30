@@ -28,35 +28,26 @@ use Illuminate\Support\ServiceProvider;
 class GeonamesServiceProvider extends ServiceProvider
 {
     /**
-     * Artisan commands
-     */
-    protected array $serviceCommands = [
-        'Yurtesen\Geonames\Console\Download',
-        'Yurtesen\Geonames\Console\Install',
-        'Yurtesen\Geonames\Console\Seed',
-    ];
-
-    /**
      * Bootstrap the application events.
      */
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__.'/database/migrations' => base_path('database/migrations'),
-        ], 'migrations');
+        $this->publishesMigrations([
+            __DIR__.'/database/migrations' => database_path('migrations'),
+        ]);
 
         $this->publishes([
-            __DIR__.'/config/geonames.php' => base_path('config/geonames.php'),
+            __DIR__.'/config/geonames.php' => config_path('geonames.php'),
         ], 'config');
 
         $this->mergeConfigFrom(realpath(__DIR__.'/config/geonames.php'), 'geonames');
-    }
 
-    /**
-     * Register the service provider.
-     */
-    public function register(): void
-    {
-        $this->commands($this->serviceCommands);
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\Download::class,
+                Console\Install::class,
+                Console\Seed::class,
+            ]);
+        }
     }
 }

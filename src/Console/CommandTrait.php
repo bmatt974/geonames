@@ -75,9 +75,9 @@ trait CommandTrait
             'filename' => 'iso-languagecodes',
             'table' => 'geonames_iso_language_codes',
         ],
-        'alternateNames' => [
-            'url' => 'http://download.geonames.org/export/dump/alternateNames.zip',
-            'filename' => 'alternateNames',
+        'alternateNamesV2' => [
+            'url' => 'http://download.geonames.org/export/dump/alternateNamesV2.zip',
+            'filename' => 'alternateNamesV2',
             'table' => 'geonames_alternate_names',
         ],
         'hierarchy' => [
@@ -157,16 +157,18 @@ trait CommandTrait
                     'type' => trim($row[2]),
                 ];
             },
-            'alternateNames' => function ($row) {
+            'alternateNamesV2' => function ($row) {
                 return [
                     'alternate_name_id' => $row[0],
                     'geoname_id' => $row[1],
                     'iso_language' => $row[2] ? $row[2] : null,
                     'alternate_name' => $row[3] ? $row[3] : null,
-                    'isPreferredName' => $row[4] ? 1 : 0,
-                    'isShortName' => $row[5] ? 1 : 0,
-                    'isColloquial' => $row[6] ? 1 : 0,
-                    'isHistoric' => $row[7] ? 1 : 0,
+                    'is_preferred_name' => $row[4] ? 1 : 0,
+                    'is_short_name' => $row[5] ? 1 : 0,
+                    'is_colloquial' => $row[6] ? 1 : 0,
+                    'is_historic' => $row[7] ? 1 : 0,
+                    'from' => isset($row[8]) && trim($row[8]) !== '' ? trim($row[8]) : null,
+                    'to' => isset($row[9]) && trim($row[9]) !== '' ? trim($row[9]) : null,
                 ];
             },
             'timeZones' => function ($row) {
@@ -516,19 +518,23 @@ trait CommandTrait
             throw new RuntimeException($zipFileName.' does not have .zip extension');
         }
 
-        // Final file path
+        // Final file path (what the rest of the code expects)
         $storagePath = config('geonames.storagePath');
-        $extractedFile = $this->files[$name]['filename'].'.txt';
-        $path = $storagePath.'/'.$extractedFile;
+        $expectedFile = $this->files[$name]['filename'].'.txt';
+        $path = $storagePath.'/'.$expectedFile;
 
         // Open zip archive because we need the size of extracted file
         $zipArchive = new ZipArchive;
         $zipArchive->open($storagePath.'/'.$zipFileName);
 
+        // Determine the actual filename inside the zip
+        $zipInternalFile = $zipArchive->statName($expectedFile)
+            ? $expectedFile
+            : substr($zipFileName, 0, -4).'.txt';
+
         if (file_exists($path)) {
-            $uncompressedSize = $zipArchive->statName($extractedFile)['size'];
-            $fileSize = filesize($path);
-            if ($uncompressedSize !== $fileSize) {
+            $stat = $zipArchive->statName($zipInternalFile);
+            if ($stat && filesize($path) !== $stat['size']) {
                 $this->line('<info>Existing File:</info> '.basename($path).' size does not match the one in '.$zipFileName);
             } else {
                 // Do not extract again
@@ -539,10 +545,14 @@ trait CommandTrait
             }
         }
         // File does not exist or size does not match
-        $this->line('<info>Extracting File:</info> '.$extractedFile.' from '.$zipFileName.' ...!!!Please Wait!!!...');
-        // Extract file
-        $zipArchive->extractTo($storagePath.'/', $extractedFile);
+        $this->line('<info>Extracting File:</info> '.$zipInternalFile.' from '.$zipFileName.' ...!!!Please Wait!!!...');
+        $zipArchive->extractTo($storagePath.'/', $zipInternalFile);
         $zipArchive->close();
+
+        // Rename to expected filename if they differ
+        if ($zipInternalFile !== $expectedFile) {
+            rename($storagePath.'/'.$zipInternalFile, $path);
+        }
     }
 
     /**

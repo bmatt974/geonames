@@ -1,31 +1,10 @@
 <?php
 
-/**
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
- * User: Evren Yurtesen
- * Date: 04-Jul-16
- * Time: 5:14 PM
- */
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGeonamesCountryInfosTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -36,7 +15,6 @@ class CreateGeonamesCountryInfosTable extends Migration
             $table->char('iso', 2)->unique();
             $table->char('iso3', 3)->unique();
             $table->char('iso_numeric', 3)->unique();
-            // $table->smallInteger('iso_numeric')->unsigned();
             $table->char('fips', 2)->nullable();
             $table->string('country', 60);
             $table->string('capital', 40);
@@ -57,7 +35,6 @@ class CreateGeonamesCountryInfosTable extends Migration
             $table->string('neighbors', 60)->nullable();
             $table->char('equivalent_fips_code', 2)->nullable();
         });
-        // DB::statement('ALTER TABLE geonames_country_infos CHANGE iso_numeric iso_numeric SMALLINT(3) UNSIGNED ZEROFILL NOT NULL');
 
         // Now can add the foreign key constraint to timezones table also
         Schema::connection(config('geonames.connection'))->table('geonames_timezones', function (Blueprint $table) {
@@ -76,4 +53,4 @@ class CreateGeonamesCountryInfosTable extends Migration
         });
         Schema::connection(config('geonames.connection'))->dropIfExists('geonames_country_infos');
     }
-}
+};

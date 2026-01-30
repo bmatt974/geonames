@@ -33,10 +33,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $geoname_id
  * @property string $iso_language
  * @property string $alternate_name
- * @property bool $isPreferredName
- * @property bool $isShortName
- * @property bool $isColloquial
- * @property bool $isHistoric
+ * @property bool $is_preferred_name
+ * @property bool $is_short_name
+ * @property bool $is_colloquial
+ * @property bool $is_historic
+ * @property string|null $from
+ * @property string|null $to
  * @property-read \Yurtesen\Geonames\Models\GeonamesGeoname $geoname
  *
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAlternateName whereAlternateNameId($value)
@@ -47,6 +49,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAlternateName whereIsShortName($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAlternateName whereIsColloquial($value)
  * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAlternateName whereIsHistoric($value)
+ * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAlternateName whereFrom($value)
+ * @method static \Illuminate\Database\Query\Builder|\Yurtesen\Geonames\Models\GeonamesAlternateName whereTo($value)
  *
  * @mixin \Eloquent
  */
